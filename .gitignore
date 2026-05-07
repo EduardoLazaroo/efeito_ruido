@@ -1,0 +1,36 @@
+# Python virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Testing
+.pytest_cache/
+.coverage
+coverage.xml
+
+# Editor / IDE
+.vscode/
+.idea/
+
+# Generated results
+results/
+
+# Documentation and draft files not tracked
+artigo.txt
+RESULTADOS_EXPERIMENTAIS.md
+RESUMO_EXECUTIVO.md
+GUIA_DE_INTEGRACAO.md
+PROJETO_COMPLETADO.md
+INDICE_ARQUIVOS.md
