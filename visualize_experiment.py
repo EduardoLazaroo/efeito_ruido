@@ -55,10 +55,12 @@ def create_sample_images(num_images=5, size=IMAGE_SIZE, seed=SEED):
     rng = np.random.default_rng(seed)
     images = []
     for idx in range(num_images):
-        img = rng.integers(50, 200, size + (3,), dtype=np.uint8)
+        background = np.full(size + (3,), 35, dtype=np.uint8)
+        circle = np.full(size + (3,), 240, dtype=np.uint8)
         y, x = np.ogrid[-1:1:size[0]*1j, -1:1:size[1]*1j]
         mask = x**2 + y**2 <= 0.25
-        img[mask] = np.clip(img[mask].astype(np.float32) * 1.5, 0, 255).astype(np.uint8)
+        img = background.copy()
+        img[mask] = circle[mask]
         images.append(img)
     return images
 
@@ -200,11 +202,9 @@ def spatial_entropy(map_arr):
 
 def save_fig(fig, path_root, dpi=300):
     png_path = f'{path_root}.png'
-    pdf_path = f'{path_root}.pdf'
     fig.savefig(png_path, dpi=dpi, bbox_inches='tight')
-    fig.savefig(pdf_path, dpi=dpi, bbox_inches='tight')
     plt.close(fig)
-    return png_path, pdf_path
+    return png_path
 
 
 def plot_synthetic_panel(images):
@@ -288,7 +288,7 @@ def plot_global_statistics(df):
     ax[2].set_title('Entropia na Imagem Perturbada')
     ax[2].set_xlabel('Ruído')
     ax[2].set_ylabel('Entropia')
-    saved_paths += save_fig(fig, STATS_DIR / 'boxplots_metrics')
+    saved_paths.append(save_fig(fig, STATS_DIR / 'boxplots_metrics'))
 
     fig, ax = plt.subplots(figsize=(10, 6), constrained_layout=True)
     order = LEVEL_ORDER
@@ -303,7 +303,7 @@ def plot_global_statistics(df):
     ax.set_xticklabels([LEVEL_LABELS[k] for k in order])
     ax.grid(alpha=0.3)
     ax.legend(loc='best', fontsize=9)
-    saved_paths += save_fig(fig, STATS_DIR / 'lineplot_metrics')
+    saved_paths.append(save_fig(fig, STATS_DIR / 'lineplot_metrics'))
 
     fig, axes = plt.subplots(1, 2, figsize=(18, 6), constrained_layout=True)
     sns.barplot(data=df, x='noise_type', y='cosine_similarity', hue='noise_level', ci=95, ax=axes[0])
@@ -314,14 +314,12 @@ def plot_global_statistics(df):
     axes[1].set_title('Média de IoU com IC 95%')
     axes[1].set_xlabel('Ruído')
     axes[1].set_ylabel('IoU')
-    saved_paths += save_fig(fig, STATS_DIR / 'barplot_metrics')
-
-    fig, axes = plt.subplots(1, 2, figsize=(18, 6), constrained_layout=True)
+    saved_paths.append(save_fig(fig, STATS_DIR / 'barplot_metrics'))
     sns.violinplot(data=df, x='noise_type', y='cosine_similarity', hue='noise_level', split=True, ax=axes[0])
     axes[0].set_title('Distribuição de Cosine Similarity')
     sns.violinplot(data=df, x='noise_type', y='iou', hue='noise_level', split=True, ax=axes[1])
     axes[1].set_title('Distribuição de IoU')
-    saved_paths += save_fig(fig, STATS_DIR / 'violin_metrics')
+    saved_paths.append(save_fig(fig, STATS_DIR / 'violin_metrics'))
 
     return saved_paths
 
