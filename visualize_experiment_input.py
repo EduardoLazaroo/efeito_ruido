@@ -124,19 +124,29 @@ def add_gaussian_noise(img, sigma, rng):
 
 def add_salt_pepper_noise(img, amount, rng):
     noisy = img.copy()
-    total = noisy.size // 3
-    num_salt = int(amount * total)
-    num_pepper = num_salt
-    for _ in range(num_salt):
-        y = rng.integers(0, noisy.shape[0])
-        x = rng.integers(0, noisy.shape[1])
-        c = rng.integers(0, noisy.shape[2])
-        noisy[y, x, c] = 255
-    for _ in range(num_pepper):
-        y = rng.integers(0, noisy.shape[0])
-        x = rng.integers(0, noisy.shape[1])
-        c = rng.integers(0, noisy.shape[2])
-        noisy[y, x, c] = 0
+
+    h, w, _ = noisy.shape
+    total_pixels = h * w
+
+    num_salt = int(amount * total_pixels)
+    num_pepper = int(amount * total_pixels)
+
+    # ==========================
+    # SALT (branco)
+    # ==========================
+    ys = rng.integers(0, h, num_salt)
+    xs = rng.integers(0, w, num_salt)
+
+    noisy[ys, xs] = 255
+
+    # ==========================
+    # PEPPER (preto)
+    # ==========================
+    ys = rng.integers(0, h, num_pepper)
+    xs = rng.integers(0, w, num_pepper)
+
+    noisy[ys, xs] = 0
+
     return noisy
 
 

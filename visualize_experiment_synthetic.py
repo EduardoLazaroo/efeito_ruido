@@ -51,7 +51,7 @@ def load_metrics():
     return df
 
 
-def create_sample_images(num_images=5, size=IMAGE_SIZE, seed=SEED):
+def create_sample_images(num_images=1, size=IMAGE_SIZE, seed=SEED):
     rng = np.random.default_rng(seed)
     images = []
     for idx in range(num_images):
@@ -94,21 +94,29 @@ def add_gaussian_noise(img, sigma, rng):
     return (noisy * 255).astype(np.uint8)
 
 
-def add_salt_pepper_noise(img, amount, rng):
+def add_salt_pepper_noise(img, amount, rng, pepper_value=35, salt_value=240):
     noisy = img.copy()
-    total = noisy.size // 3
-    num_salt = int(amount * total)
-    num_pepper = num_salt
-    for _ in range(num_salt):
-        y = rng.integers(0, noisy.shape[0])
-        x = rng.integers(0, noisy.shape[1])
-        c = rng.integers(0, noisy.shape[2])
-        noisy[y, x, c] = 255
-    for _ in range(num_pepper):
-        y = rng.integers(0, noisy.shape[0])
-        x = rng.integers(0, noisy.shape[1])
-        c = rng.integers(0, noisy.shape[2])
-        noisy[y, x, c] = 0
+
+    h, w = noisy.shape[:2]
+    total_pixels = h * w
+
+    num_salt = int(amount * total_pixels)
+    num_pepper = int(amount * total_pixels)
+
+    # Salt
+    ys = rng.integers(0, h, num_salt)
+    xs = rng.integers(0, w, num_salt)
+
+    for y, x in zip(ys, xs):
+        noisy[y, x] = salt_value
+
+    # Pepper
+    ys = rng.integers(0, h, num_pepper)
+    xs = rng.integers(0, w, num_pepper)
+
+    for y, x in zip(ys, xs):
+        noisy[y, x] = pepper_value
+
     return noisy
 
 
