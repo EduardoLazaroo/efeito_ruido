@@ -163,7 +163,7 @@ axes[1].set_title('IoU por Tipo e Nível')
 
 plt.tight_layout()
 plt.savefig('results/plots/heatmap_analysis.png', dpi=150, bbox_inches='tight')
-print("\n✓ Heatmap salvo em: results/plots/heatmap_analysis.png")
+print("\n[OK] Heatmap salvo em: results/plots/heatmap_analysis.png")
 plt.close()
 
 # Gráfico: Violinplot
@@ -179,7 +179,7 @@ axes[1].set_ylabel('IoU')
 
 plt.tight_layout()
 plt.savefig('results/plots/violin_analysis.png', dpi=150, bbox_inches='tight')
-print("✓ Violin plot salvo em: results/plots/violin_analysis.png")
+print("[OK] Violin plot salvo em: results/plots/violin_analysis.png")
 plt.close()
 
 print("\n" + "=" * 70)

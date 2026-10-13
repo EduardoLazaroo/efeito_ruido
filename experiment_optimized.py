@@ -189,7 +189,7 @@ df = pd.DataFrame(results)
 # Salvar resultados
 csv_path = 'results/metrics.csv'
 df.to_csv(csv_path, index=False)
-print(f"\n✓ Métricas salvas em: {csv_path}")
+print(f"\n[OK] Metricas salvas em: {csv_path}")
 
 # Gerar gráficos
 print("\nGerando gráficos...")
@@ -238,7 +238,7 @@ plt.xticks(rotation=0)
 plt.tight_layout()
 plot_path = 'results/plots/metrics_analysis.png'
 plt.savefig(plot_path, dpi=150, bbox_inches='tight')
-print(f"✓ Gráfico principal salvo em: {plot_path}")
+print(f"[OK] Grafico principal salvo em: {plot_path}")
 plt.close()
 
 # Gráfico adicional: Tendência de degradação
@@ -259,7 +259,7 @@ ax.grid(True, alpha=0.3)
 
 degradation_path = 'results/plots/degradation_trend.png'
 plt.savefig(degradation_path, dpi=150, bbox_inches='tight')
-print(f"✓ Gráfico de degradação salvo em: {degradation_path}")
+print(f"[OK] Grafico de degradacao salvo em: {degradation_path}")
 plt.close()
 
 # Resumo estatístico
@@ -283,6 +283,6 @@ for level in ['low', 'medium', 'high']:
     print(f"    - IoU: {subset['iou'].mean():.4f}")
 
 print("\n" + "="*60)
-print("✓ Experimento concluído com sucesso!")
-print(f"✓ Resultados salvos em: results/")
+print("[OK] Experimento concluido com sucesso!")
+print(f"[OK] Resultados salvos em: results/")
 print("="*60)

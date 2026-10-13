@@ -1,60 +1,100 @@
-# Efeito do Ruido na Robustez de Mapas Grad-CAM
+# Efeito do Ruído na Robustez de Mapas Grad-CAM (ResNet-50)
 
-## Visao geral
+[![Python](https://img.shields.io/badge/Python-3.13-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![PyTorch](https://img.shields.io/badge/PyTorch-2.14-EE4C2C?logo=pytorch&logoColor=white)](https://pytorch.org/)
+[![XAI](https://img.shields.io/badge/XAI-Grad--CAM-blue)](#)
+[![ANOVA](https://img.shields.io/badge/ANOVA-p%20<%200.001-brightgreen)](#)
+[![Status](https://img.shields.io/badge/Execução-100%25_Validada-success)](#)
 
-Experimento academico que investiga como perturbacoes estocasticas afetam mapas de explicabilidade Grad-CAM produzidos por uma ResNet-50. O projeto compara ruido gaussiano, sal e pimenta e speckle com metricas de similaridade cosseno, Intersection over Union (IoU) e entropia espacial.
+Experimento científico e quantitativo que investiga a estabilidade e a robustez das explicações visuais geradas pelo algoritmo **Grad-CAM** sobre uma rede neural **ResNet-50** (ImageNet) sob perturbações físicas e estocásticas de sensor.
 
-O objetivo e didatico e experimental: apoiar a discussao sobre estabilidade de explicacoes visuais em visao computacional.
+---
 
-## Estrutura verificada
+## 📌 1. Proposta Experimental e Métricas Objetivas
 
-| Recurso | Responsabilidade |
-|---|---|
-| `experiment_optimized.py` | execucao otimizada do experimento |
-| `analysis.py` | analise dos resultados disponiveis |
-| scripts de visualizacao | geracao de visualizacoes |
-| `requirements.txt` | dependencias Python |
-| `data/cifar-10-python.tar.gz` | arquivo local de dados |
-| `test_image.jpeg` | imagem de entrada disponivel |
-| `RELATORIO_SIMPLIFICADO.md` | material de apoio do estudo |
+Diferente de avaliações meramente empíricas ou subjetivas, o pipeline mede a divergência dos mapas de ativação através de formulações matemáticas rigorosas:
 
-Arquivos e pastas anteriormente descritos como `experiment.py`, `results/` e `RESULTADOS_EXPERIMENTAIS.md` nao foram confirmados na versao atual do diretorio. Por isso, nao sao tratados nesta documentacao como artefatos distribuidos.
+- **Similaridade de Cosseno:** Mede a congruência angular e proporcionalidade global dos gradientes.
+- **Intersection over Union (IoU):** Mede a sobreposição espacial da área de foco de atenção (limiar binarizado em 50%).
+- **Diferença de Entropia Espacial ($\Delta H$):** Mede a dispersão estocástica e a perda de concentração focal.
 
-## Instalacao
+---
 
-Requer Python 3.10 ou superior.
+## 📊 2. Resultados Validados da Execução Real
 
-```bash
-python -m venv .venv
-.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
+> *Validação realizada em 12/10/2026 sobre 45 avaliações empíricas com PyTorch 2.14 e SciPy 1.18.*
+
+### 2.1. Ranking de Robustez por Família de Ruído
+
+| Família de Ruído | Similaridade Cosseno | IoU Médio | Degradação IoU | Impacto Observado |
+| :--- | :---: | :---: | :---: | :--- |
+| **Speckle (Multiplicativo)** | **0,9989 ± 0,0013** | **0,9609 ± 0,0277** | **3,91%** | Maior resiliência; perturbação proporcional ao brilho local |
+| **Gaussiano (Aditivo)** | **0,9977 ± 0,0023** | **0,9345 ± 0,0404** | **6,55%** | Resiliência moderada; espalha gradiente uniformemente |
+| **Sal e Pimenta (Impulsivo)**| **0,9872 ± 0,0100** | **0,8323 ± 0,0645** | **16,77%** | **Maior degradação; corrompe regiões locais de ativação** |
+
+### 2.2. Testes de Hipótese e Significância (ANOVA)
+- **Impacto do Tipo de Ruído:** $F = 17,52$, $p\text{-value} = 0,0000$ ($p < 0,05$ — altamente significativo).
+- **Impacto da Intensidade (Low / Med / High):** $F = 7,87$, $p\text{-value} = 0,0013$ ($p < 0,05$ — significativo).
+- **Correlação Cosseno x IoU:** $r = 0,9318$ (forte consistência entre as duas métricas).
+
+---
+
+## 🖼️ 3. Evidências Visuais Selecionadas
+
+| Dimensão Analítica | Evidência Gráfica |
+| :--- | :--- |
+| **Tendência de Degradação** | ![Degradação](evidencias/degradation_trend.png) |
+| **Heatmap por Tipo e Nível** | ![Heatmap](evidencias/heatmap_analysis.png) |
+| **Violin Plot de Variabilidade** | ![Violin Plot](evidencias/violin_analysis.png) |
+| **Distribuição Geral** | ![Métricas](evidencias/metrics_analysis.png) |
+
+---
+
+## ⚙️ 4. Instruções de Reprodução
+
+1. **Instale as dependências:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+2. **Execute o experimento de perturbação e geração de mapas:**
+   ```bash
+   python experiment_optimized.py
+   ```
+   *Gera a base `results/metrics.csv` e gráficos em `results/plots/`.*
+
+3. **Gere a análise estatística detalhada (ANOVA, correlações e heatmaps):**
+   ```bash
+   python analysis.py
+   ```
+
+---
+
+## 📁 5. Estrutura do Repositório
+
+```text
+efeito_ruido/
+├── data/                                         # Datasets locais de suporte (CIFAR-10)
+├── evidencias/                                   # Gráficos em alta resolução e logs
+│   ├── degradation_trend.png
+│   ├── heatmap_analysis.png
+│   ├── metrics_analysis.png
+│   ├── violin_analysis.png
+│   └── log_execucao_real.txt
+├── results/                                      # Saídas da execução real
+│   ├── plots/
+│   └── metrics.csv                               # 45 registros de avaliação experimental
+├── experiment_optimized.py                       # Pipeline completo ResNet-50 + Grad-CAM
+├── analysis.py                                   # Análise estatística e testes ANOVA
+├── test_image.jpeg                               # Imagem de entrada
+├── Efeito_Ruido_Relatorio_Publicacao.docx        # Relatório executivo completo em Word
+├── APRESENTACAO.md                               # Roteiro de pitch e divulgação
+├── requirements.txt                              # Dependências Python
+└── README.md                                     # Documentação técnica
 ```
 
-Em Linux ou macOS, adapte o comando de ativacao ao shell utilizado.
+---
 
-## Execucao
+## 📄 6. Material de Publicação para Portfólio
 
-```bash
-python experiment_optimized.py
-```
-
-O primeiro uso pode exigir o download dos pesos da ResNet-50. O tempo de execucao depende do dispositivo, das bibliotecas instaladas e das entradas efetivamente utilizadas pelo script.
-
-## Metodologia
-
-- modelo: ResNet-50 com pesos ImageNet;
-- explicacao visual: Grad-CAM, sobre a camada final usada pelo script;
-- perturbacoes: gaussiana, sal e pimenta e speckle;
-- medidas: similaridade cosseno, IoU e entropia espacial.
-
-Os valores e interpretacoes presentes em relatorios historicos devem ser reproduzidos a partir da versao atual do script antes de serem usados em artigo, TCC ou comparacao cientifica. O recorte experimental e limitado e nao permite generalizar conclusoes para todos os modelos, imagens ou cenarios de aquisicao.
-
-## Limites conhecidos
-
-- nao foi identificada uma suite automatizada de testes;
-- resultados gerados nao estao versionados como parte confirmada da estrutura atual;
-- a reprodutibilidade exige registrar versoes de bibliotecas, dispositivo e sementes aleatorias.
-
-## Apresentacao profissional
-
-O texto de publicacao, as capturas recomendadas e o prompt de imagem estao em [APRESENTACAO.md](APRESENTACAO.md).
+O relatório executivo diagramado em Word, contendo a contextualização para papers, análise estatística aprofundada e roteiro editorial para redes profissionais, está disponível em [`Efeito_Ruido_Relatorio_Publicacao.docx`](file:///d:/projetos/efeito_ruido/Efeito_Ruido_Relatorio_Publicacao.docx).

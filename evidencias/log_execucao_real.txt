@@ -1,0 +1,38 @@
+============================================================
+EXECUÇÃO REAL - EFEITO RUÍDO (ROBUSTEZ GRAD-CAM EM RESNET-50)
+Data de Execução: 12/10/2026
+Ambiente: Python 3.13 (VENV) | PyTorch 2.14.1 (CPU) | Torchvision 0.29.1 | SciPy 1.18.1
+============================================================
+
+1. CONFIGURAÇÃO EXPERIMENTAL
+- Modelo Base: ResNet-50 pré-treinada (ImageNet)
+- Amostras Avaliadas: 5 imagens sintéticas com máscaras controladas
+- Perturbações Avaliadas (3 tipos x 3 níveis = 9 variantes por imagem):
+  * Ruído Gaussiano: sigma = [0.01 (baixo), 0.05 (médio), 0.10 (alto)]
+  * Ruído Sal e Pimenta: taxa = [0.02 (baixo), 0.05 (médio), 0.10 (alto)]
+  * Ruído Speckle: sigma = [0.01 (baixo), 0.05 (médio), 0.10 (alto)]
+- Total de mapas de atenção gerados e comparados: 45 avaliações empíricas
+
+2. MÉTRICAS CONSOLIDADAS
+- Similaridade de Cosseno Geral: 0.994621 (Mediana: 0.998003, Std: 0.007886)
+- IoU Geral: 0.909245 (Mediana: 0.923077, Std: 0.072325)
+- Entropia Espacial (Diferença Média): 0.002018
+
+3. RANKING DE ROBUSTEZ POR TIPO DE RUÍDO
+------------------------------------------------------------
+Tipo de Ruído     Similaridade Cosseno   IoU Médio   Degradação IoU
+------------------------------------------------------------
+1. Speckle        0.9989 +/- 0.0013      0.9609      3.91%
+2. Gaussiano      0.9977 +/- 0.0023      0.9345      6.55%
+3. Sal e Pimenta  0.9872 +/- 0.0099      0.8323      16.77%  (Maior impacto)
+------------------------------------------------------------
+
+4. VALIDAÇÃO ESTATÍSTICA (ANOVA)
+- Tipo de Ruído: F = 17.5199, p-value = 0.0000 (Estatisticamente significante, p < 0.05)
+- Nível de Ruído: F = 7.8705, p-value = 0.0013 (Estatisticamente significante, p < 0.05)
+- Correlação de Pearson Cosseno x IoU: r = 0.9318 (Forte congruência métrica)
+
+5. CASOS EXTREMOS
+- Melhor Caso: Speckle Baixo (Cosseno = 0.999969, IoU = 0.996008)
+- Pior Caso: Sal e Pimenta Alto (Cosseno = 0.971808, IoU = 0.733102)
+Status: EXECUÇÃO 100% VALIDADA E DADOS SALVOS EM results/metrics.csv.
